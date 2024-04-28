@@ -1,24 +1,29 @@
 CC=			gcc
-CFLAGS=		-g -Wall -O2 -Wno-unused-function #-fno-inline-functions -fno-inline-functions-called-once
+CFLAGS=		-fPIC -g -Wall -O3 -Wno-unused-function #-fno-inline-functions -fno-inline-functions-called-once
 CPPFLAGS=
 INCLUDES=	
 OBJS=		kthread.o rld0.o sys.o diff.o sub.o unpack.o correct.o dfs.o \
 			ksw.o seq.o mag.o unitig.o bubble.o sa.o match.o profk.o
 PROG=		fermi2
 LIBS=		-lm -lz -lpthread
+TARGET_SHARED_LIB= libfermi2.so
 
 .SUFFIXES:.c .o
 
 .c.o:
-		$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $< -o $@
+		$(CC) -shared -c $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $< -o $@
 
-all:$(PROG)
+all:$(PROG) $(TARGET_SHARED_LIB)
+
+$(TARGET_SHARED_LIB):$(OBJS) main.o
+		$(CC) -shared $(CFLAGS) $^ -o $@
+
 
 fermi2:$(OBJS) main.o
 		$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
-		rm -fr gmon.out *.o ext/*.o a.out $(PROG) *~ *.a *.dSYM session*
+		rm -fr gmon.out *.o ext/*.o a.out $(TARGET_SHARED_LIB) $(PROG) *~ *.a *.dSYM session*
 
 depend:
 		(LC_ALL=C; export LC_ALL; makedepend -Y -- $(CFLAGS) $(DFLAGS) -- *.c)
@@ -40,4 +45,4 @@ seq.o: kstring.h kseq.h
 sub.o: rld0.h
 t.o: ksort.h
 unitig.o: kvec.h kstring.h rld0.h mag.h priv.h ksort.h
-unpack.o: rld0.h kstring.h kseq.h
+unpack.o: unpack.h rld0.h kstring.h kseq.h
