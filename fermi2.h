@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "rld0.h"
+#include "unpack.h"
 
 #define FM_VERSION "r204"
 
@@ -14,6 +15,7 @@ typedef struct {
 	rldintv_t ik, ok[2][6];
 } fmdsmem_t;
 
+struct rld_t;
 typedef struct { size_t n, m; rldintv_t *a; } rldintv_v;
 typedef struct { size_t n, m; fmdsmem_t *a; } fmdsmem_v;
 typedef struct { size_t n, m; uint64_t  *a; } uint64_v;
@@ -36,6 +38,7 @@ fmsa_t *fm_sa_restore(const char *fn);
 void fm_sa_destroy(fmsa_t *sa);
 
 int64_t fm_sa(const rld_t *e, const fmsa_t *sa, int64_t k, int64_t *si);
+void fm_exact(const rld_t *e, const char *s, int64_t *_l, int64_t *_u);
 
 #ifdef __cplusplus
 }

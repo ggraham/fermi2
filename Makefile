@@ -7,23 +7,26 @@ OBJS=		kthread.o rld0.o sys.o diff.o sub.o unpack.o correct.o dfs.o \
 PROG=		fermi2
 LIBS=		-lm -lz -lpthread
 TARGET_SHARED_LIB= libfermi2.so
-
+TARGET_STATIC_LIB= libfermi2.a
 .SUFFIXES:.c .o
 
 .c.o:
 		$(CC) -shared -c $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $< -o $@
 
-all:$(PROG) $(TARGET_SHARED_LIB)
+all:$(PROG) $(TARGET_SHARED_LIB) $(TARGET_STATIC_LIB)
 
 $(TARGET_SHARED_LIB):$(OBJS) main.o
-		$(CC) -shared $(CFLAGS) $^ -o $@
+		$(CC) -shared $(CFLAGS) -o $@ $^ $(LIBS)
+
+$(TARGET_STATIC_LIB):$(OBJS) main.o
+		$(AR) -crsu $@ $^
 
 
 fermi2:$(OBJS) main.o
 		$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
-		rm -fr gmon.out *.o ext/*.o a.out $(TARGET_SHARED_LIB) $(PROG) *~ *.a *.dSYM session*
+		rm -fr gmon.out *.o ext/*.o a.out $(TARGET_SHARED_LIB) $(PROG) *~ *.a *.so *.dSYM session*
 
 depend:
 		(LC_ALL=C; export LC_ALL; makedepend -Y -- $(CFLAGS) $(DFLAGS) -- *.c)

@@ -19,7 +19,7 @@ typedef struct {
 	uint8_t *q;
 } rlditr_t;
 
-typedef struct __rld_t {
+typedef struct rld_t {
 	// initialized in the constructor
 	uint8_t asize, asize1; // alphabet size; asize1=asize+1
 	int8_t abits; // bits required to store a symbol
